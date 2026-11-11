@@ -1,12 +1,14 @@
 {
-  "name": "forex-ai-mentor",
+  "name": "forex-multi-ai-mentor",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
     "@google/generative-ai": "^0.14.0",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "openai": "^4.71.0"
   }
 }
