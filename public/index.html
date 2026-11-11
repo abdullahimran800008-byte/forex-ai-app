@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZRS Ultimate Forex & SMC/ICT AI Mentor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 p-4 text-center shadow-lg">
+        <h1 class="text-xl font-bold text-amber-400">📊 ZRS Ultimate Forex Mastermind</h1>
+        <p class="text-xs text-slate-400 mt-1">Covering History, Pips, Leverage, Fundamentals, Technicals, SMC, ICT, & VSA</p>
+    </header>
+
+    <!-- Chat Container -->
+    <main id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-4 max-w-4xl w-full mx-auto">
+        <div class="flex items-start space-x-3">
+            <div class="bg-amber-600 text-white rounded-full h-9 w-9 flex items-center justify-center font-bold text-sm shrink-0">AI</div>
+            <div class="bg-slate-900 p-4 rounded-xl max-w-[85%] text-sm border border-slate-800 leading-relaxed">
+                Salam! Main aapka <b>Ultimate Forex AI Mentor</b> hoon. Aap mujhse Forex ki har cheez ke baray mein pooch sakte hain:<br><br>
+                🔹 <b>Basics & History:</b> Bretton Woods, Pairs, Pips, Leverage, Lots, Sessions.<br>
+                🔹 <b>Analysis:</b> Fundamental News (CPI, NFP, Interest Rates) & Technicals.<br>
+                🔹 <b>Advanced Money Concepts:</b> SMC, ICT (FVG, Order Blocks, Liquidity), aur VSA.<br><br>
+                ⚠️ <i>Disclaimer: Yeh platform sirf learning aur education ke liye hai. Forex mein risk hota hai aur 100% profit ki koi guarantee nahi hoti.</i>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Input -->
+    <footer class="bg-slate-900 border-t border-slate-800 p-4 shadow-xl">
+        <form id="chat-form" class="max-w-4xl mx-auto flex gap-2">
+            <input 
+                type="text" 
+                id="user-input" 
+                placeholder="Misal: 'ICT ka FVG kya hota hai?' ya 'Forex ki history batao'..." 
+                class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500 text-slate-100 placeholder-slate-500"
+                required
+            >
+            <button 
+                type="submit" 
+                id="send-btn"
+                class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-3 rounded-xl text-sm font-semibold transition shrink-0"
+            >
+                Ask AI
+            </button>
+        </form>
+    </footer>
+
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        chatForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            appendMessage(text, 'user');
+            userInput.value = '';
+            sendBtn.disabled = true;
+            sendBtn.innerText = 'Thinking...';
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+
+                const data = await response.json();
+                appendMessage(data.reply, 'ai');
+            } catch (err) {
+                appendMessage("Server connection error. Baraye meharbani dobara koshish karein.", 'ai');
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerText = 'Ask AI';
+            }
+        });
+
+        function appendMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex items-start space-x-3 ${sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = `${sender === 'user' ? 'bg-blue-600' : 'bg-amber-600'} text-white rounded-full h-9 w-9 flex items-center justify-center font-bold text-sm shrink-0`;
+            avatar.textContent = sender === 'user' ? 'U' : 'AI';
+
+            const bubble = document.createElement('div');
+            bubble.className = `${sender === 'user' ? 'bg-blue-950 border-blue-900' : 'bg-slate-900 border-slate-800'} p-4 rounded-xl max-w-[85%] text-sm border leading-relaxed`;
+            bubble.innerHTML = text.replace(/\n/g, '<br>');
+
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(bubble);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>
